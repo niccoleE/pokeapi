@@ -1,0 +1,31 @@
+{% extends "pokemon/base.html" %}
+
+{% block page_header %}
+
+<div>
+  <h3>{{ header }}</h3>
+</div>
+
+{% endblock %}
+
+{% block content %}
+
+{% for pokemon in pokemons %}
+<div>
+<img src="{{ pokemon.image_url }}">
+
+<div>
+  <h4>{{ pokemon.name }}</h4>
+  <p>{{ pokemon.types }}<p>
+  {% if user.is_authenticated %}
+  {% if pokemon not in user_pokemons %}
+  <a class="btn btn-outline-success" href="{% url 'pokemon:my_pokemons' pokemon.name %}">Add to My Pokemons</a>
+  {% else %}
+  <a class="btn btn-outline-danger" href="{% url 'pokemon:delete_pokemons' pokemon.name %}">Delete from My Pokemons</a>
+  {% endif %}
+  {% endif %}
+</div>
+</div>
+{% endfor %}
+
+{% endblock content %}

@@ -1,0 +1,17 @@
+{% extends "pokemon/base.html" %}
+
+{% block page_header %}
+
+<div>
+  <h3>{{ user.username }} Pokemons</h3>
+</div>
+
+{% endblock %}
+
+{% block content %}
+{% for pokemon in pokemons %}
+<li>
+{{ pokemon.name }}
+</li>
+{% endfor %}
+{% endblock content %}
