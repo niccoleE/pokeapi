@@ -10,8 +10,11 @@
 
 {% block content %}
 {% for user in users %}
-<li>
-{{ user.username }}     - <a href="{% url 'pokemon:user_pokemons' user %}">Show Pokemons List</a>
-</li>
+<ul>
+  <li>
+  <h4>{{ user.username }}</h4>
+  <a href="{% url 'pokemon:user_pokemons' user %}">Show Pokemons List</a>
+  </li>
+</ul>
 {% endfor %}
 {% endblock content %}

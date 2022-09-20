@@ -1,5 +1,4 @@
 import datetime
-from unittest import mock
 
 import pytz
 
@@ -32,10 +31,10 @@ class PokemonTests(TestCase):
 
     def test_model_str(self):
         self.assertEqual(str(self.pokemon1), 'testPokemon_1')
+        self.assertEqual(str(self.pokemon2), 'testPokemon_2')
 
     def test_pokemons_index(self):
         response = self.client.get(reverse('pokemon:index'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "please Log in")
-        self.assertEqual(list(response.context['pokemons']), [self.pokemon1, self.pokemon2])
 

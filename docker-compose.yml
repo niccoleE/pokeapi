@@ -4,7 +4,9 @@ services:
   poke_django:
     build: .
     container_name: poke_django
-    command: python manage.py runserver 0.0.0.0:8001
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8001"
     volumes:
       - .:/usr/src/app
     ports:
@@ -15,7 +17,7 @@ services:
   pokedb:
     image: postgres
     ports:
-      - '8001:5432'
+      - '5432:5432'
     volumes:
       - pgdata:/var/lib/postgresql/data/
     environment:

@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.core.exceptions import ObjectDoesNotExist
 import requests
 from django.contrib.auth.models import User
+from django.db.utils import IntegrityError
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -9,25 +10,49 @@ from rest_framework import status
 from .serializers import PokemonSerializer, UserSerializer
 from .models import Pokemon
 
-POKE_API = "http://pokeapi.co/api/v2/pokemon/"
-
 
 def index(request):
-    pokemons = Pokemon.objects.all()
+    response = requests.get("http://pokeapi.co/api/v2/pokemon?limit=50").json()
+    pokemons = response['results']
+
     if request.user.is_authenticated:
         user_pokemons = Pokemon.objects.filter(owners=request.user).order_by('id')
+        user_pokemon_names = [p.name for p in user_pokemons]
         header = "Choose Your Pokemons"
     else:
-        user_pokemons = []
+        user_pokemon_names = []
         header = "To be able to choose pokemons, please Log in"
-    context = {'pokemons': pokemons, 'user_pokemons': user_pokemons, 'header': header}
 
+    context = {'pokemons': pokemons, 'names': user_pokemon_names, 'header': header}
     return render(request, 'pokemon/index.html', context)
 
-
 def my_pokemons(request, name):
-    pokemon = Pokemon.objects.get(name=name)
-    pokemon.owners.add(request.user)
+    pokemon_url = ""
+    response = requests.get("http://pokeapi.co/api/v2/pokemon?limit=50").json()
+    pokemons = response['results']
+
+    for pokemon in pokemons:
+        if pokemon['name'] == name:
+            pokemon_url = pokemon['url']
+            pokemon['in_db'] = "yes"
+
+    pokemon_data = requests.get(pokemon_url).json()
+    pokemon_name = pokemon_data['name']
+    pokemon_img = pokemon_data['sprites']['front_default']
+    pokemon_types = [t['type']['name'] for t in pokemon_data['types'] if pokemon_data['types']]
+
+    new_pokemon = Pokemon(
+        name=pokemon_name,
+        image_url=pokemon_img,
+        api_url=pokemon_url,
+        types=pokemon_types,
+    )
+    try:
+        new_pokemon.save()
+        new_pokemon.owners.add(request.user)
+    except IntegrityError:
+        this_pokemon = Pokemon.objects.get(name=name)
+        this_pokemon.owners.add(request.user)
 
     return redirect('pokemon:index')
 
@@ -52,9 +77,9 @@ def users_info(request):
 
 
 def user_pokemons(request, username):
-    user = User.objects.get(username=username)
-    pokemons = Pokemon.objects.filter(owners=user)
-    context = {'pokemons': pokemons}
+    the_user = User.objects.get(username=username)
+    pokemons = Pokemon.objects.filter(owners=the_user)
+    context = {'pokemons': pokemons, 'the_user': the_user}
     return render(request, 'pokemon/user_pokemons.html', context)
 
 

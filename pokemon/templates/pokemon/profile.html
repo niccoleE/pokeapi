@@ -12,7 +12,10 @@
 <h4>My Pokemons </h4>
 {% for pokemon in my_pokemons %}
 <ul>
-  <li>{{ pokemon.name }}</li><img src="{{ pokemon.image_url }}"><a class="btn btn-outline-success" href="">CHOOSE</a>
+  <li><h4>{{ pokemon.name }}</h4></li>
+  <img src="{{ pokemon.image_url }}">
+  <a class="btn btn-outline-success" href="">CHOOSE</a>
+  <p>{{ pokemon.types }}</p>
 </ul>
 {% endfor %}
 {% endblock content %}

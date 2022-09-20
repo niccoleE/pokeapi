@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 
 class Pokemon(models.Model):
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200, unique=True)
     image_url = models.URLField(max_length=2000)
     api_url = models.URLField(max_length=2000)
     types = ArrayField(models.CharField(max_length=200), blank=True)

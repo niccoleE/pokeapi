@@ -89,7 +89,7 @@ DATABASES = {
         'NAME': 'pokemon_db',
         'USER': 'postgres',
         'PASSWORD': '123',
-        'HOST': 'localhost',
+        'HOST': 'pokedb',
         'PORT': '5432',
     }
 }

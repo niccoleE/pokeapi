@@ -3,15 +3,17 @@
 {% block page_header %}
 
 <div>
-  <h3>{{ user.username }} Pokemons</h3>
+  <h3>{{ the_user.username }} Pokemons</h3>
 </div>
 
 {% endblock %}
 
 {% block content %}
 {% for pokemon in pokemons %}
+<ul>
 <li>
-{{ pokemon.name }}
+<h4>{{ pokemon.name }}<h4>
 </li>
+</ul>
 {% endfor %}
 {% endblock content %}
